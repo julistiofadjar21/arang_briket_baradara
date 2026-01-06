@@ -1,0 +1,74 @@
+body {
+    background: linear-gradient(rgba(224, 144, 59, 0.9), rgba(40, 58, 90, 0.9)), url("../img/cta-bg.jpeg") fixed center center;
+    background-size: 100% 100%;
+  }
+  
+  .aspirasi form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: rgba(255, 255, 255, 0.468);
+    width: 45%;
+    margin: 50px auto;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .aspirasi h3 {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .aspirasi p {
+    color: #fff;
+    text-align: center;
+  }
+  
+  .aspirasi .aspirasi-btn {
+    font-family: "Jost", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1px;
+    display: table;
+    padding: 12px 40px;
+    border-radius: 50px;
+    transition: 0.5s;
+    margin: 0 auto;
+    border: 2px solid #fff;
+    color: #1e151596;
+    font-weight: bold;
+  }
+  
+  .aspirasi .aspirasi-btn:hover {
+    background: #47b2e4;
+    border: 2px solid #47b2e4;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  @media (max-width: 1024px) {
+    .aspirasi {
+      background-attachment: scroll;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .aspirasi .aspirasi-btn-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+
+  @keyframes animate-loading {
+    10% {
+      transform: rotate(10deg);
+    }
+  
+    100% {
+      transform: rotate(360deg);
+    }
+  }

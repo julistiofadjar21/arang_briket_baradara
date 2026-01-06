@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Ekonomi Global 2025</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    header {
+      background-color: #0077b6;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      background: #e0f7fa;
+    }
+    .controls select, .controls button {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #023e8a;
+    }
+    canvas {
+      margin-top: 10px;
+    }
+    p {
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Dashboard Ekonomi Global 2025</h1>
+  <p>Analisis berdasarkan artikel Vibiznews</p>
+</header>
+
+<div class="grid-container" id="dashboard">
+
+  <!-- Pertumbuhan Ekonomi Dunia -->
+  <div class="card" data-year="2025" data-country="all">
+    <h2>Pertumbuhan Ekonomi Dunia</h2>
+    <canvas id="worldGrowthChart"></canvas>
+    <p>Pertumbuhan ekonomi global diperkirakan turun dari 3,2% menjadi 2,9% akibat perang tarif AS-Tiongkok.</p>
+  </div>
+
+  <!-- Penurunan Ekspor Indonesia -->
+  <div class="card" data-year="2025" data-country="indonesia">
+    <h2>Ekspor Indonesia ke AS dan Tiongkok</h2>
+    <canvas id="exportChart"></canvas>
+    <p>Ekspor Indonesia ke AS dan Tiongkok mengalami penurunan karena kebijakan tarif baru yang diberlakukan pada April 2025.</p>
+  </div>
+
+  <!-- Safe Haven Asset (Amerika Serikat) -->
+  <div class="card" data-year="2025" data-country="amerika serikat">
+    <h2>Perpindahan Modal ke Aset Aman</h2>
+    <canvas id="safeHavenChart"></canvas>
+    <p>Modal global beralih ke aset aman seperti Emas, Obligasi Eropa, dan Jepang akibat meningkatnya ketidakpastian global.</p>
+  </div>
+
+  <!-- Pertumbuhan Ekonomi Indonesia -->
+  <div class="card" data-year="2025" data-country="indonesia">
+    <h2>Pertumbuhan Ekonomi Indonesia</h2>
+    <canvas id="indonesiaGrowthChart"></canvas>
+    <p>Walaupun tekanan global meningkat, pertumbuhan ekonomi Indonesia masih positif, didukung konsumsi domestik dan investasi nonbangunan.</p>
+  </div>
+
+</div>
+
+<script>
+  // Chart: Pertumbuhan Ekonomi Dunia
+  new Chart(document.getElementById('worldGrowthChart'), {
+    type: 'bar',
+    data: {
+      labels: ['2024', '2025 (Prediksi)'],
+      datasets: [{
+        label: 'Pertumbuhan (%)',
+        data: [3.2, 2.9],
+        backgroundColor: ['#e63946', '#d90429'],  // Merah
+        borderRadius: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      animation: { duration: 1500, easing: 'easeOutBounce' }
+    }
+  });
+
+  // Chart: Penurunan Ekspor Indonesia
+  new Chart(document.getElementById('exportChart'), {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+      datasets: [{
+        label: 'Ekspor (Miliar USD)',
+        data: [15, 14, 13.5, 12, 11.5, 11],
+        borderColor: '#e63946',         // Merah
+        backgroundColor: '#ffb3b3',      // Merah muda
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      animation: { duration: 1500, easing: 'easeInOutQuart' }
+    }
+  });
+
+  // Chart: Perpindahan Modal ke Aset Aman (Amerika Serikat)
+  new Chart(document.getElementById('safeHavenChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Emas', 'Obligasi Eropa', 'Obligasi Jepang'],
+      datasets: [{
+        label: 'Investasi (%)',
+        data: [45, 35, 20],
+        backgroundColor: ['#ffb703', '#fb5607', '#ff7c43'], // warna tetap karena bukan biru
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      },
+      animation: { duration: 1500 }
+    }
+  });
+
+  // Chart: Pertumbuhan Ekonomi Indonesia
+  new Chart(document.getElementById('indonesiaGrowthChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      datasets: [{
+        label: 'Pertumbuhan (%)',
+        data: [5.1, 5.0, 5.2, 5.3],
+        backgroundColor: '#e63946',  // Merah
+        borderRadius: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      animation: { duration: 1500, easing: 'easeOutElastic' }
+    }
+  });
+</script>
+
+</body>
+</html>

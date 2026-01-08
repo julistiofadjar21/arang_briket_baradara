@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Penjualan Briket Bara Dara</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <style>
+    body { padding-top: 20px; }
+    .admin-photo {
+      width: 150px; height: 150px; border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* ===== Analitik (mirip bahanbaku.php) ===== */
+    .analytics-wrap { max-width: 1000px; margin: 0 auto 60px auto; }
+    .analytics-card {
+      background: #fff; border: 1px solid #f0d6d6; border-radius: 12px;
+      padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .analytics-title { margin: 0 0 8px 0; color: #a71d2a; font-size: 20px; text-align: center; }
+    .analytics-subtitle { margin: 0 0 16px 0; color: #555; text-align: center; font-size: 14px; }
+
+    .filter-row {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; align-items: center;
+      margin: 10px 0 16px 0;
+    }
+    .filter-row label { font-size: 14px; color: #333; margin: 0; }
+    .filter-row select {
+      padding: 8px 10px; border-radius: 6px; border: 1px solid #ddd;
+      min-width: 210px;
+    }
+    .filter-row button {
+      background-color: #a71d2a; color: #fff;
+      padding: 9px 14px; border: none; border-radius: 6px;
+      cursor: pointer;
+    }
+    .filter-row button:hover { background-color: #d32f2f; }
+
+    .mini-stats { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 14px 0 10px 0; }
+    .stat-box {
+      border: 1px solid #eee; border-radius: 10px;
+      padding: 10px 12px; min-width: 220px; background: #fffdfd;
+    }
+    .stat-box .k { font-size: 12px; color: #777; margin-bottom: 6px; }
+    .stat-box .v { font-size: 14px; color: #111; font-weight: bold; }
+
+    .chart-area { margin-top: 12px; }
+
+    .note-error {
+      color: #b71c1c; background: #ffebee; border: 1px solid #ffcdd2;
+      padding: 10px 12px; border-radius: 8px; margin: 10px 0; font-size: 13px;
+    }
+    .note-empty {
+      color: #333; background: #fff8e1; border: 1px solid #ffe0b2;
+      padding: 10px 12px; border-radius: 8px; margin: 10px 0; font-size: 13px; text-align: center;
+    }
+
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+    .data-table th, .data-table td { border-bottom: 1px solid #eee; padding: 10px 8px; text-align: left; }
+    .data-table th { background: #c62828; color: #fff; }
+    .data-table tr:hover { background: #fff5f5; }
+
+    @media (max-width: 600px) {
+      .stat-box { min-width: 100%; }
+      .filter-row select { min-width: 100%; }
+    }
+    /* ===== End analitik ===== */
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="my-4 text-center">Admin Penjualan Briket Bara Dara</h1>
+
+    <!-- Navigasi Menu -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="admin.html">Admin</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="pesanan_admin.php">Pesanan</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="tambah_stock.php">Tambah Stock</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="logoutadmin.html">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Profil Admin -->
+    <section class="my-4">
+      <h2>Profil Admin</h2>
+      <div class="card">
+        <div class="card-body d-flex align-items-center">
+          <img id="adminPhoto" src="default-photo.jpg" alt="Foto Admin" class="admin-photo mr-4">
+
+          <div>
+            <h5 class="card-title" id="adminName">Nama: Julistio</h5>
+            <p class="card-text" id="adminEmail">Email: admin@baradara.com</p>
+            <p class="card-text" id="adminPhone">Nomor Telepon: +62 812 3456 7890</p>
+            <a href="editprofil.html" class="btn btn-primary">Edit Profil</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Analitik (Grafik sama seperti bahanbaku.php) ===== -->
+    <section class="my-4 analytics-wrap">
+      <div class="analytics-card">
+        <h3 class="analytics-title">Frekuensi Analisis Pembelian</h3>
+        <p class="analytics-subtitle" id="analyticsSubtitle">
+          Grafik menampilkan bahan baku/produk paling diminati berdasarkan data pada tabel <strong>pesanan</strong>.
+        </p>
+
+        <form id="analyticsForm" class="filter-row">
+          <label for="ym">Pilih Bulan (12 bulan terakhir):</label>
+          <select name="ym" id="ym"></select>
+
+          <label for="metric">Metrik:</label>
+          <select name="metric" id="metric">
+            <option value="kg">Total Kg Dibeli</option>
+            <option value="transaksi">Jumlah Transaksi</option>
+            <option value="omzet">Omzet (Rp)</option>
+          </select>
+
+          <button type="submit">Tampilkan</button>
+        </form>
+
+        <div id="noteBox"></div>
+
+        <div id="miniStats" class="mini-stats" style="display:none;">
+          <div class="stat-box">
+            <div class="k">Paling diminati (Top 1)</div>
+            <div class="v" id="topLabel">-</div>
+          </div>
+          <div class="stat-box">
+            <div class="k">Total Kg (Top 1)</div>
+            <div class="v" id="topKg">-</div>
+          </div>
+          <div class="stat-box">
+            <div class="k">Transaksi (Top 1)</div>
+            <div class="v" id="topTrx">-</div>
+          </div>
+          <div class="stat-box">
+            <div class="k">Omzet (Top 1)</div>
+            <div class="v" id="topOmz">-</div>
+          </div>
+        </div>
+
+        <div class="chart-area">
+          <canvas id="freqChart" height="120"></canvas>
+        </div>
+
+        <table class="data-table" id="dataTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>Bahan Baku / Produk</th>
+              <th>Total Kg</th>
+              <th>Transaksi</th>
+              <th>Omzet (Rp)</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody"></tbody>
+        </table>
+
+        <hr style="border:none;border-top:1px solid #eee;margin:18px 0;">
+
+        <h3 class="analytics-title" style="font-size:18px;margin-top:0;">Perbandingan 12 Bulan Terakhir</h3>
+        <p class="analytics-subtitle" style="margin-bottom:12px;">
+          Tren total pembelian (Kg) selama 12 bulan terakhir untuk membandingkan antar bulan.
+        </p>
+
+        <div class="chart-area">
+          <canvas id="trendChart" height="110"></canvas>
+        </div>
+      </div>
+    </section>
+    <!-- ===== End Analitik ===== -->
+  </div>
+
+  <!-- Bootstrap JS (agar navbar toggle berfungsi) -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script>
+    // ===== Profil Admin (localStorage) =====
+    document.addEventListener("DOMContentLoaded", () => {
+      const adminData = JSON.parse(localStorage.getItem("adminData")) || {};
+
+      if (adminData.name) document.getElementById("adminName").textContent = `Nama: ${adminData.name}`;
+      if (adminData.email) document.getElementById("adminEmail").textContent = `Email: ${adminData.email}`;
+      if (adminData.phone) document.getElementById("adminPhone").textContent = `Nomor Telepon: ${adminData.phone}`;
+      if (adminData.photo) document.getElementById("adminPhoto").src = adminData.photo;
+    });
+
+    // ===== Analitik Chart (ambil data dari PHP endpoint) =====
+    (function () {
+      const MONTH_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+      const ymSelect = document.getElementById('ym');
+      const metricSelect = document.getElementById('metric');
+      const form = document.getElementById('analyticsForm');
+
+      const noteBox = document.getElementById('noteBox');
+      const miniStats = document.getElementById('miniStats');
+      const dataTable = document.getElementById('dataTable');
+      const dataBody = document.getElementById('dataTableBody');
+      const subtitle = document.getElementById('analyticsSubtitle');
+
+      const topLabel = document.getElementById('topLabel');
+      const topKg = document.getElementById('topKg');
+      const topTrx = document.getElementById('topTrx');
+      const topOmz = document.getElementById('topOmz');
+
+      const freqCanvas = document.getElementById('freqChart');
+      const trendCanvas = document.getElementById('trendChart');
+
+      let freqChart = null;
+      let trendChart = null;
+
+      function pad2(n){ return String(n).padStart(2,'0'); }
+
+      function ymNow() {
+        const d = new Date();
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+      }
+
+      function labelMonth(ym) {
+        const y = Number(ym.slice(0,4));
+        const m = Number(ym.slice(5,7));
+        return `${MONTH_ID[m-1]} ${y}`;
+      }
+
+      function buildMonthOptions() {
+        ymSelect.innerHTML = '';
+        const now = new Date();
+        // 12 bulan terakhir (termasuk bulan ini)
+        for (let i = 0; i < 12; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const ym = `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+          const opt = document.createElement('option');
+          opt.value = ym;
+          opt.textContent = `${MONTH_ID[d.getMonth()]} ${d.getFullYear()}`;
+          ymSelect.appendChild(opt);
+        }
+      }
+
+      function showError(msg) {
+        noteBox.innerHTML = `<div class="note-error">${escapeHtml(msg)}</div>`;
+      }
+
+      function showEmpty(msg) {
+        noteBox.innerHTML = `<div class="note-empty">${escapeHtml(msg)}</div>`;
+      }
+
+      function clearNote() {
+        noteBox.innerHTML = '';
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function fmtNumID(n, opts) {
+        try { return Number(n).toLocaleString('id-ID', opts || undefined); }
+        catch { return String(n); }
+      }
+
+      function destroyCharts() {
+        if (freqChart) { freqChart.destroy(); freqChart = null; }
+        if (trendChart) { trendChart.destroy(); trendChart = null; }
+      }
+
+      async function loadAnalytics(ym, metric) {
+        clearNote();
+        miniStats.style.display = 'none';
+        dataTable.style.display = 'none';
+        dataBody.innerHTML = '';
+
+        // Endpoint PHP yang Anda buat (lihat kode di bawah)
+        const url = `analytics_pesanan.php?ym=${encodeURIComponent(ym)}&metric=${encodeURIComponent(metric)}`;
+
+        let json;
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          json = await res.json();
+        } catch (e) {
+          destroyCharts();
+          showError(`Gagal mengambil data analitik. Pastikan file "analytics_pesanan.php" ada dan bisa diakses. Detail: ${e.message}`);
+          return;
+        }
+
+        if (!json || json.success !== true) {
+          destroyCharts();
+          showError(json && json.message ? json.message : 'Response tidak valid dari server.');
+          return;
+        }
+
+        const data = json.data || {};
+        const meta = data.meta || {};
+        const freq = data.freq || {};
+        const trend = data.trend || {};
+
+        subtitle.innerHTML = `Grafik menampilkan bahan baku/produk paling diminati pada <strong>${escapeHtml(meta.month_label || labelMonth(ym))}</strong> dari tabel <strong>pesanan</strong>.`;
+
+        // Kondisi kosong
+        if (!freq.labels || freq.labels.length === 0) {
+          destroyCharts();
+          showEmpty('Belum ada data pesanan pada bulan ini, sehingga grafik belum bisa ditampilkan.');
+          // Trend masih bisa tampil (kalau ada), tetap render trend di bawah:
+          renderTrend(trend.labels || [], trend.values || []);
+          return;
+        }
+
+        // Mini stats
+        const top = freq.top_info || {};
+        miniStats.style.display = '';
+        topLabel.textContent = top.label || '-';
+        topKg.textContent = `${fmtNumID(top.total_kg || 0, {minimumFractionDigits:2, maximumFractionDigits:2})} Kg`;
+        topTrx.textContent = `${fmtNumID(top.total_transaksi || 0)}x`;
+        topOmz.textContent = `Rp ${fmtNumID(top.total_omzet || 0)}`;
+
+        // Table
+        const rows = freq.rows || [];
+        dataTable.style.display = '';
+        dataBody.innerHTML = rows.map(r => {
+          const lbl = escapeHtml(r.label_bahan ?? '');
+          const kg = fmtNumID(r.total_kg ?? 0, {minimumFractionDigits:2, maximumFractionDigits:2});
+          const trx = fmtNumID(r.total_transaksi ?? 0);
+          const omz = fmtNumID(r.total_omzet ?? 0);
+          return `
+            <tr>
+              <td>${lbl}</td>
+              <td>${kg}</td>
+              <td>${trx}</td>
+              <td>${omz}</td>
+            </tr>
+          `;
+        }).join('');
+
+        // Render chart
+        renderFreq(freq, meta);
+        renderTrend(trend.labels || [], trend.values || []);
+      }
+
+      function renderFreq(freq, meta) {
+        const labels = freq.labels || [];
+        const metricData = freq.data_metric || [];
+        const dataKg = freq.data_kg || [];
+        const dataTrx = freq.data_transaksi || [];
+        const dataOmz = freq.data_omzet || [];
+
+        const metricLabel = meta.metric_label || 'Metrik';
+        const selectedYM = meta.ym || '';
+        const metric = meta.metric || 'kg';
+
+        if (!freqCanvas) return;
+
+        if (freqChart) { freqChart.destroy(); freqChart = null; }
+
+        freqChart = new Chart(freqCanvas, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: `${metricLabel} (${selectedYM})`,
+              data: metricData,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  afterBody: function(ctx) {
+                    const i = ctx[0].dataIndex;
+                    const kg = (dataKg[i] ?? 0);
+                    const trx = (dataTrx[i] ?? 0);
+                    const omz = (dataOmz[i] ?? 0);
+
+                    const lines = [];
+                    lines.push('Total Kg: ' + Number(kg).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' Kg');
+                    lines.push('Transaksi: ' + Number(trx).toLocaleString('id-ID') + 'x');
+                    lines.push('Omzet: Rp ' + Number(omz).toLocaleString('id-ID'));
+                    return lines;
+                  }
+                }
+              },
+              legend: { display: true }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    if (metric === 'omzet') return 'Rp ' + Number(value).toLocaleString('id-ID');
+                    return Number(value).toLocaleString('id-ID');
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderTrend(labels, values) {
+        if (!trendCanvas) return;
+
+        if (trendChart) { trendChart.destroy(); trendChart = null; }
+
+        trendChart = new Chart(trendCanvas, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Total Pembelian (Kg) - 12 Bulan Terakhir',
+              data: values,
+              borderWidth: 2,
+              tension: 0.25,
+              fill: false
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return Number(value).toLocaleString('id-ID');
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Init
+      buildMonthOptions();
+      ymSelect.value = ymNow();
+      metricSelect.value = 'kg';
+
+      // Load pertama kali
+      loadAnalytics(ymSelect.value, metricSelect.value);
+
+      // Submit filter
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        loadAnalytics(ymSelect.value, metricSelect.value);
+      });
+    })();
+  </script>
+</body>
+</html>

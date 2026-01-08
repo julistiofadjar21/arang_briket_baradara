@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRIKET BARA DARA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #c62828;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+      position: relative; /* Agar logo bisa di posisi absolut */
+    }
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    /* ✅ Logo container */
+    .logo-container {
+      position: absolute;
+      top: 3px;
+      left: 50px;
+    }
+
+    .logo-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+    }
+
+    nav {
+      background-color: #c6282c;
+      padding: 10px 0;
+      text-align: center;
+    }
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      display: inline-block;
+      margin: 0 10px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 10px;
+      border-radius: 5px;
+    }
+    nav ul li a:hover {
+      background-color: #d32f2f;
+    }
+    .promo-container {
+      padding: 30px;
+      text-align: center;
+    }
+    h2 {
+      color: #c6282c;
+    }
+    .promo-item {
+      background-color: white;
+      padding: 5px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      width: 25%;
+      vertical-align: top;
+    }
+    .promo-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+    .promo-item p {
+      color: #555;
+    }
+    .promo-item button {
+      background-color: #c6282c;
+      color: white;
+      border: none;
+      padding: 10px 10px;
+      cursor: pointer;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .promo-item button:hover {
+      background-color: #b22222;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- ✅ Logo ditambahkan -->
+  <div class="logo-container">
+    <img src="LOGO.OKEMI.png" alt="Logo Toko">
+  </div>
+  <h1>ARANG BRIKET</h1>
+  <h1>BARA DARA</h1>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="halamanberanda.php">Beranda</a></li>
+    <li><a href="tentangkami.html">Tentang Kami</a></li>
+    <li><a href="kontak.html">Kontak</a></li>
+    <li><a href="bahanbaku.php">Bahan Baku</a></li>
+    <li><a href="promo.html">Promo</a></li>
+    <li><a href="tes_pesanansaya.php">Pesanan saya</a></li>
+  </ul>
+</nav>
+
+<div class="promo-container">
+  <h2>Promo Terbaik untuk Anda!</h2>
+
+  <div class="promo-item">
+    <img src="briket.jpeg" alt="Promo 1">
+    <h2>Paket Hemat Briket 10 Kg</h2>
+    <p>Diskon 20% untuk setiap pembelian paket 10 Kg arang briket.</p>
+    <button onclick="location.href='pesansekarang.html'">Beli Sekarang</button>
+  </div>
+
+  <div class="promo-item">
+    <img src="briket1.html" alt="Promo 2">
+    <h2>Gratis Ongkir!</h2>
+    <p>Gratis ongkir ke seluruh Indonesia untuk pembelian minimal 5 Kg arang briket.</p>
+    <button onclick="location.href='pesansekarang.html'">Beli Sekarang</button>
+  </div>
+
+  <div class="promo-item">
+    <img src="briket2.jpg" alt="Promo 3">
+    <h2>Paket Langganan Bulanan</h2>
+    <p>Langganan bulanan dengan harga spesial dan pengiriman rutin setiap bulan.</p>
+    <button onclick="location.href='pesansekarang.html'">Beli Sekarang</button>
+  </div>
+</div>
+</body>
+</html>

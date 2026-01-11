@@ -21,6 +21,7 @@ function bulan_indo($bulan_angka) {
 /* =========================
    Filter Analitik
    ym: YYYY-MM (default: bulan berjalan)
+   (Filter tanggal DIHAPUS)
    (Filter metrik DIHAPUS)
 ========================= */
 $ym = isset($_GET['ym']) ? trim($_GET['ym']) : date('Y-m');
@@ -255,7 +256,7 @@ if ($has_pesanan) {
         }
 
         .logo-container { position: absolute; top: 3px; left: 50px; }
-        .logo-container img { width: 120px; height: 120px; border-radius: 100%; }
+        .logo-container img { width: 131px; height: 131px; border-radius: 100%; }
 
         header h1 {
             margin: 0;
@@ -326,6 +327,15 @@ if ($has_pesanan) {
             color: #555;
             text-align: center;
             font-size: 14px;
+        }
+
+        /* subtitle jadi merah & bold */
+        .analytics-subtitle--headline{
+            margin: 0 0 16px 0;
+            color: #a71d2a;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .filter-row {
@@ -401,8 +411,7 @@ if ($has_pesanan) {
             <li><a href="tentangkami.html">Tentang Kami</a></li>
             <li><a href="kontak.html">Kontak</a></li>
             <li><a href="#">Bahan Baku</a></li>
-            <li><a href="promo.html">Promo</a></li>
-            <li><a href="tes_pesanansaya.php">Pesanan saya</a></li>
+            <li><a href="promo.php">Promo</a></li>
         </ul>
     </nav>
 
@@ -454,8 +463,8 @@ if ($has_pesanan) {
             <?php
                 $bulan_label = bulan_indo((int)substr($ym, 5, 2)) . ' ' . substr($ym, 0, 4);
             ?>
-            <h3 class="analytics-title">Frekuensi Analisis Pembelian</h3>
-            <p class="analytics-subtitle">
+
+            <p class="analytics-subtitle--headline">
                 Grafik menampilkan bahan baku/produk paling diminati pada <strong><?php echo htmlspecialchars($bulan_label); ?></strong>
                 dari tabel <strong>pesanan</strong>.
             </p>
@@ -510,11 +519,10 @@ if ($has_pesanan) {
     <script>
     (function(){
         const labelsBulan = <?php echo json_encode($labels_bulan, JSON_UNESCAPED_UNICODE); ?>;
+        const dataKg      = <?php echo json_encode($data_kg, JSON_UNESCAPED_UNICODE); ?>;
 
-        const dataKg       = <?php echo json_encode($data_kg, JSON_UNESCAPED_UNICODE); ?>;
-
-        const metricLabel  = <?php echo json_encode($metric_label, JSON_UNESCAPED_UNICODE); ?>;
-        const selectedYM   = <?php echo json_encode($ym, JSON_UNESCAPED_UNICODE); ?>;
+        const metricLabel = <?php echo json_encode($metric_label, JSON_UNESCAPED_UNICODE); ?>;
+        const selectedYM  = <?php echo json_encode($ym, JSON_UNESCAPED_UNICODE); ?>;
 
         const canvas1 = document.getElementById('freqChart');
         if (canvas1 && labelsBulan.length > 0) {
@@ -533,11 +541,9 @@ if ($has_pesanan) {
                     plugins: {
                         tooltip: {
                             callbacks: {
-                                // judul tooltip = nama produk
                                 title: function(ctx){
                                     return ctx[0].label || '';
                                 },
-                                // isi tooltip = total kg saja
                                 label: function(ctx){
                                     const v = ctx.parsed.y ?? 0;
                                     return 'Total Kg Dibeli: ' + Number(v).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' Kg';

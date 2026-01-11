@@ -31,6 +31,8 @@ function respond($success, $message = null, $data = null) {
    ym: YYYY-MM
    metric: kg | transaksi | omzet
    status: optional (contoh: Lunas / Belum Lunas)
+   date_from: YYYY-MM-DD (optional)
+   date_to  : YYYY-MM-DD (optional)
 ========================= */
 $ym = isset($_GET['ym']) ? trim($_GET['ym']) : date('Y-m');
 if (!preg_match('/^\d{4}-\d{2}$/', $ym)) $ym = date('Y-m');
@@ -50,9 +52,33 @@ $metric_label = 'Total Kg Dibeli';
 if ($metric === 'transaksi') $metric_label = 'Jumlah Transaksi';
 if ($metric === 'omzet') $metric_label = 'Omzet (Rp)';
 
+/* =========================
+   RANGE TANGGAL (PERUBAHAN):
+   - Jika date_from & date_to valid -> pakai range tsb
+   - Jika tidak -> pakai range bulan dari ym (default lama)
+   Catatan:
+   - date_to dibuat eksklusif dengan +1 hari supaya inklusif pada query
+========================= */
+$date_from = isset($_GET['date_from']) ? trim($_GET['date_from']) : '';
+$date_to   = isset($_GET['date_to']) ? trim($_GET['date_to']) : '';
+
+$hasDateRange = false;
+if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_from) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_to)) {
+    // validasi kronologis
+    if ($date_from <= $date_to) {
+        $hasDateRange = true;
+    }
+}
+
 // Range tanggal bulan terpilih (tanggal bertipe DATE)
 $start_month = $ym . '-01';
 $end_month = date('Y-m-d', strtotime($start_month . ' +1 month')); // eksklusif
+
+// Override jika user pakai date range
+if ($hasDateRange) {
+    $start_month = $date_from; // inklusif
+    $end_month = date('Y-m-d', strtotime($date_to . ' +1 day')); // eksklusif (agar date_to inklusif)
+}
 
 if (!$koneksi) {
     respond(false, 'Koneksi database gagal!');
@@ -140,6 +166,7 @@ if ($result) {
         $totalKg = (float)$r['total_kg'];
         $totalTrx = (int)$r['total_transaksi'];
         $totalOmz = (float)$r['total_omzet'];
+
 
         $freq_rows[] = [
             'label_bahan' => $label,
@@ -278,7 +305,10 @@ respond(true, null, [
         'metric' => $metric,
         'metric_label' => $metric_label,
         'month_label' => $month_label,
-        'status' => $status
+        'status' => $status,
+        // PERUBAHAN: ikutkan info range tanggal yang dipakai (opsional)
+        'date_from' => $hasDateRange ? $date_from : $start_month,
+        'date_to' => $hasDateRange ? $date_to : date('Y-m-d', strtotime($end_month . ' -1 day'))
     ],
     'freq' => [
         'labels' => $labels_bulan,

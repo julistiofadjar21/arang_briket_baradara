@@ -212,9 +212,9 @@ $vipLevel = $user["vip_level"] ?? null;
         }
 
         .logo-container img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
+            width: 131px;
+            height: 131px;
+            border-radius: 100%;
         }
 
         .logout-button {
@@ -483,7 +483,7 @@ $vipLevel = $user["vip_level"] ?? null;
                        onclick="return confirm('Apakah anda yakin ingin keluar?')">Logout</a>
                 </div>
             <?php endif; ?>
-        </div>
+        </div>~
     </header>
 
     <nav>
@@ -493,7 +493,6 @@ $vipLevel = $user["vip_level"] ?? null;
             <li><a href="kontak.html">Kontak</a></li>
             <li><a href="bahanbaku.php">Bahan Baku</a></li>
             <li><a href="promo.php">Promo</a></li>
-            <li><a href="tes_pesanansaya.php">Pesanan saya</a></li>
         </ul>
     </nav>
 

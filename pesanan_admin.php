@@ -18,6 +18,11 @@ function is_valid_date_ymd($d) {
     return (bool)preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$d);
 }
 
+/* >>> PERUBAHAN: validasi bulan (YYYY-MM) */
+function is_valid_ym($ym) {
+    return (bool)preg_match('/^\d{4}-\d{2}$/', (string)$ym);
+}
+
 function rupiah($n) {
     return "Rp " . number_format((int)$n, 0, ',', '.');
 }
@@ -282,10 +287,29 @@ if (isset($_GET['verif']) && isset($_GET['id_pesanan'])) {
         }
     }
 
+    /* >>> PERUBAHAN: redirect back tetap bawa filter (tanggal / bulan) */
     $back = "pesanan_admin.php";
-    if (isset($_GET['tanggal']) && is_valid_date_ymd($_GET['tanggal'])) {
-        $back .= "?tanggal=" . urlencode($_GET['tanggal']);
+    $qs = [];
+
+    $fb = isset($_GET['filter_by']) ? strtolower(trim((string)$_GET['filter_by'])) : '';
+    if ($fb !== 'tanggal' && $fb !== 'bulan') $fb = '';
+
+    if ($fb === 'tanggal') {
+        if (isset($_GET['tanggal']) && is_valid_date_ymd($_GET['tanggal'])) {
+            $qs['filter_by'] = 'tanggal';
+            $qs['tanggal'] = $_GET['tanggal'];
+        }
+    } elseif ($fb === 'bulan') {
+        if (isset($_GET['ym']) && is_valid_ym($_GET['ym'])) {
+            $qs['filter_by'] = 'bulan';
+            $qs['ym'] = $_GET['ym'];
+        }
     }
+
+    if (!empty($qs)) {
+        $back .= "?" . http_build_query($qs);
+    }
+
     header("Location: " . $back);
     exit;
 }
@@ -395,21 +419,53 @@ function build_simple_pdf($title, $lines) {
 }
 
 /* =========================
-   Filter Tanggal
+   Filter Tanggal / Bulan (dropdown)
 ========================= */
+$filter_by = isset($_GET['filter_by']) ? strtolower(trim((string)$_GET['filter_by'])) : '';
+if ($filter_by !== 'tanggal' && $filter_by !== 'bulan') {
+    $filter_by = '';
+}
+
 $tanggal = isset($_GET['tanggal']) ? trim($_GET['tanggal']) : "";
 if ($tanggal !== "" && !is_valid_date_ymd($tanggal)) {
     $tanggal = "";
+}
+
+$ym = isset($_GET['ym']) ? trim($_GET['ym']) : "";
+if ($ym !== "" && !is_valid_ym($ym)) {
+    $ym = "";
+}
+
+if ($filter_by === '') {
+    // auto pilih berdasarkan parameter yang ada
+    if ($ym !== "") $filter_by = 'bulan';
+    else $filter_by = 'tanggal';
 }
 
 $where = "";
 $types = "";
 $params = [];
 
-if ($tanggal !== "") {
+/* >>> PERUBAHAN: apply filter sesuai dropdown */
+if ($filter_by === 'tanggal' && $tanggal !== "") {
     $where = "WHERE tanggal = ?";
     $types = "s";
     $params[] = $tanggal;
+} elseif ($filter_by === 'bulan' && $ym !== "") {
+    $start_month = $ym . "-01";
+    $end_month = date('Y-m-d', strtotime($start_month . ' +1 month')); // eksklusif
+    $where = "WHERE tanggal >= ? AND tanggal < ?";
+    $types = "ss";
+    $params[] = $start_month;
+    $params[] = $end_month;
+}
+
+/* >>> PERUBAHAN: querystring filter untuk dipakai di link-link */
+$filterQS = "";
+if ($filter_by === 'tanggal' && $tanggal !== "") {
+    $filterQS = "filter_by=tanggal&tanggal=" . urlencode($tanggal);
+} elseif ($filter_by === 'bulan' && $ym !== "") {
+    $filterQS = "filter_by=bulan&ym=" . urlencode($ym);
 }
 
 /* =========================
@@ -428,7 +484,15 @@ if (isset($_GET['export']) && $_GET['export'] === 'pdf') {
 
     $lines = [];
     $judul = "Daftar Pesanan";
-    $judul .= ($tanggal !== "") ? " - Tanggal: $tanggal" : " - Semua Tanggal";
+
+    /* >>> PERUBAHAN: judul PDF sesuai mode filter */
+    if ($filter_by === 'tanggal' && $tanggal !== "") {
+        $judul .= " - Tanggal: $tanggal";
+    } elseif ($filter_by === 'bulan' && $ym !== "") {
+        $judul .= " - Bulan: $ym";
+    } else {
+        $judul .= " - Semua Tanggal";
+    }
 
     $lines[] = "Kolom: Kode | Nama | Bahan | Jumlah | Total | Status";
     $lines[] = "";
@@ -451,7 +515,9 @@ if (isset($_GET['export']) && $_GET['export'] === 'pdf') {
     $pdf = build_simple_pdf($judul, $lines);
 
     $fname = "pesanan";
-    if ($tanggal !== "") $fname .= "_" . $tanggal;
+    /* >>> PERUBAHAN: nama file sesuai mode filter */
+    if ($filter_by === 'tanggal' && $tanggal !== "") $fname .= "_" . $tanggal;
+    if ($filter_by === 'bulan' && $ym !== "") $fname .= "_" . $ym;
     $fname .= ".pdf";
 
     header("Content-Type: application/pdf");
@@ -481,10 +547,18 @@ $whereVerif = "";
 $typesVerif = "";
 $paramsVerif = [];
 
-if ($tanggal !== "") {
+/* >>> PERUBAHAN: filter verifikasi ikut dropdown (tanggal/bulan) */
+if ($filter_by === 'tanggal' && $tanggal !== "") {
     $whereVerif = "WHERE tanggal = ? AND bukti_transfer <> '' AND LOWER(TRIM(status_pesanan)) = 'menunggu konfirmasi'";
     $typesVerif = "s";
     $paramsVerif[] = $tanggal;
+} elseif ($filter_by === 'bulan' && $ym !== "") {
+    $start_month_v = $ym . "-01";
+    $end_month_v = date('Y-m-d', strtotime($start_month_v . ' +1 month')); // eksklusif
+    $whereVerif = "WHERE tanggal >= ? AND tanggal < ? AND bukti_transfer <> '' AND LOWER(TRIM(status_pesanan)) = 'menunggu konfirmasi'";
+    $typesVerif = "ss";
+    $paramsVerif[] = $start_month_v;
+    $paramsVerif[] = $end_month_v;
 } else {
     $whereVerif = "WHERE bukti_transfer <> '' AND LOWER(TRIM(status_pesanan)) = 'menunggu konfirmasi'";
 }
@@ -564,6 +638,19 @@ h2 {
     margin: 0;
 }
 .filter-wrap input[type="date"] {
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* >>> PERUBAHAN: style dropdown & input month */
+.filter-wrap select {
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+}
+.filter-wrap input[type="month"]{
     padding: 7px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -695,14 +782,31 @@ td {
 
 <?php
     $pdfLink = "pesanan_admin.php?export=pdf";
-    if ($tanggal !== "") $pdfLink .= "&tanggal=" . urlencode($tanggal);
+    /* >>> PERUBAHAN: PDF link ikut filter aktif */
+    if ($filterQS !== "") $pdfLink .= "&" . $filterQS;
 ?>
 
 <!-- Kontrol di kanan atas -->
 <div class="control-bar">
     <form method="get" class="filter-wrap" id="filterForm">
-        <label for="tanggal"><strong>Tanggal:</strong></label>
-        <input type="date" id="tanggal" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">
+        <!-- >>> PERUBAHAN: dropdown pilih filter (tanggal/bulan) -->
+        <label for="filter_by"><strong>Filter:</strong></label>
+        <select id="filter_by" name="filter_by">
+            <option value="tanggal" <?= ($filter_by === 'tanggal') ? 'selected' : '' ?>>Tanggal</option>
+            <option value="bulan" <?= ($filter_by === 'bulan') ? 'selected' : '' ?>>Bulan</option>
+        </select>
+
+        <!-- Mode TANGGAL -->
+        <span id="wrapTanggal" style="display:inline-flex; gap:8px; align-items:center;">
+            <label for="tanggal"><strong>Tanggal:</strong></label>
+            <input type="date" id="tanggal" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">
+        </span>
+
+        <!-- Mode BULAN -->
+        <span id="wrapBulan" style="display:inline-flex; gap:8px; align-items:center;">
+            <label for="ym"><strong>Bulan:</strong></label>
+            <input type="month" id="ym" name="ym" value="<?= htmlspecialchars($ym) ?>">
+        </span>
 
         <a class="btn btn-reset" href="pesanan_admin.php">Reset</a>
         <a class="btn btn-pdf" href="<?= htmlspecialchars($pdfLink) ?>" title="Download PDF sesuai filter">Download PDF</a>
@@ -731,13 +835,13 @@ td {
             $downloadNameV = "bukti_pesanan_" . $idNumV . "_" . safe_filename_from_path($buktiV, "bukti_transfer");
 
             $lihatLinkV = "pesanan_admin.php?lihat_bukti=1&id_pesanan=" . $idNumV;
-            if ($tanggal !== "") $lihatLinkV .= "&tanggal=" . urlencode($tanggal);
+            if ($filterQS !== "") $lihatLinkV .= "&" . $filterQS;
 
             $approveLink = "pesanan_admin.php?verif=approve&id_pesanan=" . $idNumV;
             $rejectLink  = "pesanan_admin.php?verif=reject&id_pesanan=" . $idNumV;
-            if ($tanggal !== "") {
-                $approveLink .= "&tanggal=" . urlencode($tanggal);
-                $rejectLink  .= "&tanggal=" . urlencode($tanggal);
+            if ($filterQS !== "") {
+                $approveLink .= "&" . $filterQS;
+                $rejectLink  .= "&" . $filterQS;
             }
         ?>
         <tr>
@@ -820,7 +924,7 @@ td {
                     $downloadName = "bukti_pesanan_" . $idNum . "_" . safe_filename_from_path($bukti, "bukti_transfer");
 
                     $lihatLink = "pesanan_admin.php?lihat_bukti=1&id_pesanan=" . $idNum;
-                    if ($tanggal !== "") $lihatLink .= "&tanggal=" . urlencode($tanggal);
+                    if ($filterQS !== "") $lihatLink .= "&" . $filterQS;
                 ?>
                 <div class="bukti-actions">
                     <a href="<?= htmlspecialchars($lihatLink) ?>"
@@ -849,10 +953,54 @@ td {
 </table>
 
 <script>
-// Auto filter tanpa tombol "Terapkan"
-document.getElementById('tanggal').addEventListener('change', function () {
-    document.getElementById('filterForm').submit();
-});
+/* >>> PERUBAHAN: dropdown pilih filter tanggal/bulan + auto submit */
+(function () {
+    const form = document.getElementById('filterForm');
+    const filterBy = document.getElementById('filter_by');
+    const wrapTanggal = document.getElementById('wrapTanggal');
+    const wrapBulan = document.getElementById('wrapBulan');
+    const inputTanggal = document.getElementById('tanggal');
+    const inputYm = document.getElementById('ym');
+
+    function syncUI() {
+        const v = (filterBy && filterBy.value) ? filterBy.value : 'tanggal';
+
+        if (v === 'bulan') {
+            if (wrapTanggal) wrapTanggal.style.display = 'none';
+            if (inputTanggal) inputTanggal.disabled = true;
+
+            if (wrapBulan) wrapBulan.style.display = 'inline-flex';
+            if (inputYm) inputYm.disabled = false;
+        } else {
+            if (wrapBulan) wrapBulan.style.display = 'none';
+            if (inputYm) inputYm.disabled = true;
+
+            if (wrapTanggal) wrapTanggal.style.display = 'inline-flex';
+            if (inputTanggal) inputTanggal.disabled = false;
+        }
+    }
+
+    if (filterBy) {
+        filterBy.addEventListener('change', function () {
+            syncUI();
+            form.submit();
+        });
+    }
+
+    if (inputTanggal) {
+        inputTanggal.addEventListener('change', function () {
+            form.submit();
+        });
+    }
+
+    if (inputYm) {
+        inputYm.addEventListener('change', function () {
+            form.submit();
+        });
+    }
+
+    syncUI();
+})();
 </script>
 
 </body>

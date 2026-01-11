@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak Kami - Arang Briket Bara Dara</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #c62828;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative; /* Tambahan agar logo bisa di posisi absolut */
+        }
+
+        /* ✅ Tulisan header disamakan */
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        /* ✅ Logo container */
+        .logo-container {
+            position: absolute;
+            top: 3px;
+            left: 50px;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+        }
+
+        nav {
+            background-color: #c6282c;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h2 {
+            color: #c62828;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: center;
+        }
+
+        .contact-info a {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .contact-info img {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-info img:hover {
+            transform: scale(1.1);
+        }
+
+        .contact-details {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .contact-details p {
+            margin: 5px 0;
+        }
+
+        /* ✅ Map rapi */
+        .map-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #c62828;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- ✅ Logo ditambahkan -->
+    <div class="logo-container">
+        <img src="LOGO.OKEMI.png" alt="Logo Toko">
+    </div>
+    <h1>ARANG BRIKET</h1>
+    <h1>BARA DARA</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="halamanberanda.php">Beranda</a></li>
+        <li><a href="tentangkami.html">Tentang Kami</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+        <li><a href="bahanbaku.php">Bahan Baku</a></li>
+        <li><a href="promo.php">Promo</a></li>
+        <li><a href="tes_pesanansaya.php">Pesanan saya</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h2>Hubungi Kami Melalui</h2>
+    <div class="contact-info">
+        <a href="https://wa.me/+62081242181991" target="_blank">
+            <img src="whaatsapp.html.png" alt="WhatsApp">
+        </a>
+
+        <a href="https://www.instagram.com/briket_bara_dara" target="_blank">
+            <img src="instagram.html.png" alt="Instagram">
+        </a>
+
+        <a href="https://www.facebook.com/arangbriketbaradara" target="_blank">
+            <img src="facebook.html.png" alt="Facebook">
+        </a>
+    </div>
+
+    <div class="contact-details">
+        <p><strong>Alamat:</strong> Jl. M Yusuf Majid Btn Villa Taman Sari Blok B.15, Parepare, Sulawesi Selatan</p>
+        <p><strong>Email:</strong> BARADARA@gmail.com</p>
+        <p><strong>Telepon:</strong> +62 812-4218-1991</p>
+        <p><strong>Jam Operasional:</strong> Senin - Sabtu, 08:00 - 17:00</p>
+    </div>
+
+    <!-- ✅ GOOGLE MAP KOORDINAT AKURAT -->
+    <h2>Lokasi Kami</h2>
+    <div class="map-container">
+        <iframe 
+            src="https://www.google.com/maps?q=-3.9990334659306117,119.64552389911998&hl=es;z=14&output=embed"
+            width="100%"
+            height="350"
+            style="border:0; border-radius: 5px;"
+            allowfullscreen=""
+            loading="lazy">
+        </iframe>
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; ARANG BRIKET BARA DARA.</p>
+</footer>
+
+</body>
+</html>

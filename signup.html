@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .signup-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+    .signup-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      background-color: #c6282c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Preview foto */
+    .preview-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .preview {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(198,40,44,0.25);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+      display: none;
+    }
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+
+    <!-- penting: enctype untuk upload -->
+    <form action="signup_proses.php" method="POST" enctype="multipart/form-data" id="signupForm">
+
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+
+      <div class="form-group">
+        <label for="alamat">Alamat:</label>
+        <input type="text" id="alamat" name="alamat" required />
+      </div>
+
+      <!-- Upload Foto Profil -->
+      <div class="form-group">
+        <label for="foto">Foto Profil:</label>
+        <input type="file" id="foto" name="foto" accept="image/*" />
+        <div class="hint">Format: JPG/PNG/WEBP, maksimal 2MB.</div>
+        <div class="preview-wrap">
+          <img id="previewImg" class="preview" alt="Preview Foto Profil" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Sign Up</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const fotoInput = document.getElementById("foto");
+    const previewImg = document.getElementById("previewImg");
+
+    fotoInput.addEventListener("change", function () {
+      const file = this.files && this.files[0];
+      if (!file) {
+        previewImg.style.display = "none";
+        previewImg.src = "";
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
+      previewImg.style.display = "block";
+    });
+  </script>
+</body>
+</html>

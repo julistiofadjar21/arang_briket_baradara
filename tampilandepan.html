@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRIKET BARA DARA</title>
+
+    <style>
+        /* === HEADER BARU === */
+        header {
+            background-color: #c6282c;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+        }
+
+        header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header .logo img {
+            height: 80px;
+            width: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 28px;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        header .login-btn {
+            background-color: #fff;
+            color: #c6282c;
+            padding: 12px 18px;   /* ✅ diperbesar */
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 18px;      /* ✅ diperbesar */
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        header .login-btn:hover {
+            background-color: #d32f2f;
+            color: #fff;
+        }
+
+        /* === Navigasi === */
+        nav {
+            background-color: #c6282c;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 10px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #c6282c;
+        }
+
+        /* === Body Umum === */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #c6282c;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: #f0f4f6;
+            color: #c6282c;
+        }
+
+        /* === Sejarah & Pemilik === */
+        .history-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1000px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .history-content {
+            flex: 1;
+            padding: 40px 50px;
+            text-align: justify;
+        }
+
+        .history-content h2 {
+            font-size: 28px;
+            color: #c6282c;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .history-content p {
+            line-height: 1.8;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .owner-photo {
+            flex: 0 0 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 30px;
+        }
+
+        .owner-photo img {
+            width: 90%;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        .owner-photo p {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #c6282c;
+        }
+
+        @media (max-width: 768px) {
+            .history-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            .owner-photo {
+                width: 100%;
+                padding: 20px 0;
+            }
+            .owner-photo img {
+                width: 70%;
+            }
+            .history-content {
+                padding: 25px;
+            }
+        }
+
+        /* === Galeri Produk === */
+        .gallery {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            text-align: center;
+            border: none;
+        }
+
+        .gallery-images {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border: none;
+            line-height: 0;
+            position: relative;
+        }
+
+        .gallery-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .gallery-images img.active {
+            opacity: 1;
+        }
+
+        /* === Footer === */
+        .footer {
+            background-color: #a71d2a;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer p {
+            color: #fff;
+            margin: 0;
+        }
+
+        /* === Tombol & Popup Bantuan === */
+        .help-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #c6282c;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .help-popup {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 280px;
+            z-index: 1000;
+        }
+
+        .help-popup-header {
+            background-color: #c6282c;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .help-popup-content {
+            padding: 15px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .help-popup-content a {
+            display: block;
+            background-color: #c6282c;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .help-popup-content a:hover {
+            background-color: #a71d2a;
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ✅ HEADER BARU -->
+    <header>
+        <div class="logo">
+            <img src="LOGO.OKEMI.png" alt="Logo Bara Dara">
+        </div>
+        <h1>ARANG BRIKET BARA DARA</h1>
+        <button class="login-btn" onclick="window.location.href='tampilanloging.php'">Masuk</button>
+    </header>
+
+    <!-- Navigasi -->
+    <nav>
+        <ul>
+
+    </nav>
+
+    <!-- Galeri -->
+    <div class="gallery">
+        <div class="gallery-images">
+            <img src="pexels-pixabay-280229.jpg" alt="Produk 1" class="active">
+            <img src="pexels-pixabay-259588.jpg" alt="Produk 2">
+            <img src="pexels-mikebirdy-126271.jpg" alt="Produk 3">
+            <img src="pexels-faris-munandar-1044415-34479218.jpg" alt="Produk 4">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="history-section">
+            <div class="history-content">
+                <h2>Sejarah Terbentuknya Arang Briket Bara Dara</h2>
+                <p>
+                    Arang Briket Bara Dara berdiri dari semangat untuk menciptakan energi alternatif yang ramah lingkungan
+                    dan berdaya guna tinggi. Usaha ini berawal dari keprihatinan pemiliknya terhadap limbah tempurung kelapa
+                    yang belum dimanfaatkan secara optimal. Dengan inovasi dan tekad yang kuat, Bara Dara berhasil
+                    mengubah limbah tersebut menjadi produk arang briket berkualitas tinggi yang efisien, bersih,
+                    dan mendukung keberlanjutan lingkungan.
+                </p>
+                <p>
+                    Seiring berjalannya waktu, Bara Dara terus berkembang dan dipercaya oleh banyak pelanggan baik lokal
+                    maupun luar daerah. Kini, Bara Dara tidak hanya dikenal sebagai produsen briket, tetapi juga sebagai
+                    simbol inovasi dalam energi hijau dan pemberdayaan masyarakat sekitar.
+                </p>
+            </div>
+
+            <div class="owner-photo">
+                <div>
+                    <img src="FOTOTIO.html.jpg" alt="Foto Pemilik Bisnis">
+                    <p><strong>Julistio Fadjar Anugrah Sao</strong><br>Pemilik Bisnis</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; ARANG BRIKET BARA DARA.</p>
+        </div>
+    </div>
+
+    <!-- Popup Bantuan -->
+    <button class="help-btn" id="helpBtn">💬</button>
+    <div class="help-popup" id="helpPopup">
+        <div class="help-popup-header">
+            <span>Pusat Bantuan</span>
+            <button class="close-popup" id="closePopup">&times;</button>
+        </div>
+        <div class="help-popup-content">
+            <p>Halo! Ada yang bisa kami bantu?</p>
+            <a href="https://wa.me/6281234567890" target="_blank">Chat via WhatsApp</a>
+            <a href="mailto:info@baradara.com">Kirim Email</a>
+        </div>
+    </div>
+
+    <script>
+        // Tombol bantuan
+        const helpBtn = document.getElementById("helpBtn");
+        const helpPopup = document.getElementById("helpPopup");
+        const closePopup = document.getElementById("closePopup");
+
+        helpBtn.onclick = () => {
+            helpPopup.style.display = helpPopup.style.display === "block" ? "none" : "block";
+        };
+        closePopup.onclick = () => helpPopup.style.display = "none";
+        window.onclick = (e) => {
+            if (!helpPopup.contains(e.target) && e.target !== helpBtn) helpPopup.style.display = "none";
+        };
+
+        // Gambar berganti otomatis
+        const slides = document.querySelectorAll('.gallery-images img');
+        let index = 0;
+        function showNextImage() {
+            slides[index].classList.remove('active');
+            index = (index + 1) % slides.length;
+            slides[index].classList.add('active');
+        }
+        setInterval(showNextImage, 10000);
+    </script>
+</body>
+</html>
